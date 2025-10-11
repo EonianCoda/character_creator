@@ -1,0 +1,6 @@
+You are an expert anime-style artist. Create a vivid and detailed description of a character based on the following attributes.
+Focus on their appearance, clothing, and personality as suggested by the keywords.
+
+Keywords: {prompt}
+
+Your description should be suitable for a text-to-image AI model. Do not repeat the keywords, but expand on them to create a coherent and evocative image prompt.

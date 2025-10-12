@@ -9,6 +9,7 @@ interface CategoryItem {
 interface ChoiceItem {
   category_name: string
   name: string
+  prompt: string
   description: string
 }
 

@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { generateImageFromPrompt, LlmType } from '@/services/llm_service'
 import type { PreviewSubcategory } from '@/types'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   groupedPreview: {
     key: string
     label: string
@@ -13,7 +13,10 @@ const props = defineProps<{
   finalPrompt: string
   t: (key: string, langOverride?: 'zh_tw' | 'en') => string
   showToast: (message: string) => void
-}>()
+  isParserView?: boolean
+}>(), {
+  isParserView: false
+})
 
 const emit = defineEmits<{
   (e: 'navigate', key: string): void
@@ -61,7 +64,7 @@ async function handleGenerate() {
         <div class="card-header d-flex justify-content-between align-items-center">
           <h6 class="mb-0">{{ group.label }}</h6>
           <button
-            v-if="group.key !== 'empty'"
+            v-if="group.key !== 'empty' && !isParserView"
             class="btn btn-sm btn-outline-primary"
             @click="emit('navigate', group.key)"
           >
@@ -109,33 +112,35 @@ async function handleGenerate() {
         <div id="collapseJson" class="accordion-collapse collapse">
           <div class="accordion-body">
             <textarea class="form-control mb-2" rows="10" readonly :value="jsonData"></textarea>
-            <div class="row g-2 align-items-end">
-              <div class="col-12 col-md-6">
-                <label class="form-label">{{ t('Save as Favorite') }}</label>
-                <input class="form-control" v-model="favoriteName" placeholder="My preset" />
+            <div v-if="!isParserView">
+              <div class="row g-2 align-items-end">
+                <div class="col-12 col-md-6">
+                  <label class="form-label">{{ t('Save as Favorite') }}</label>
+                  <input class="form-control" v-model="favoriteName" placeholder="My preset" />
+                </div>
+                <div class="col-12 col-md-6 text-end">
+                  <button
+                    class="btn btn-outline-primary"
+                    @click="emit('save-favorite', favoriteName)"
+                  >
+                    {{ t('Save') }}
+                  </button>
+                </div>
               </div>
-              <div class="col-12 col-md-6 text-end">
-                <button
-                  class="btn btn-outline-primary"
-                  @click="emit('save-favorite', favoriteName)"
-                >
-                  {{ t('Save') }}
-                </button>
-              </div>
-            </div>
-            <div class="mt-3">
-              <label class="form-label">{{ t('Import JSON') }}</label>
-              <textarea
-                class="form-control mb-2"
-                rows="4"
-                v-model="importText"
-                placeholder='{
+              <div class="mt-3">
+                <label class="form-label">{{ t('Import JSON') }}</label>
+                <textarea
+                  class="form-control mb-2"
+                  rows="4"
+                  v-model="importText"
+                  placeholder='{
   "gender": "female"
 }'
-              ></textarea>
-              <button class="btn btn-outline-secondary" @click="emit('import-json', importText)">
-                {{ t('Apply') }}
-              </button>
+                ></textarea>
+                <button class="btn btn-outline-secondary" @click="emit('import-json', importText)">
+                  {{ t('Apply') }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -163,7 +168,7 @@ async function handleGenerate() {
         <div id="collapseFinal" class="accordion-collapse collapse show">
           <div class="accordion-body">
             <textarea class="form-control" rows="10" readonly :value="finalPrompt"></textarea>
-            <div class="mt-3">
+            <div class="mt-3" v-if="!isParserView">
               <button
                 class="btn btn-primary w-100"
                 @click="handleGenerate"

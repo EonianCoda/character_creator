@@ -6,6 +6,8 @@ import ToastNotification from '@/components/ToastNotification.vue'
 import type { CategoryItem, ChoiceItem, SelectedAttributes, AlertType } from '@/types'
 import { type LanguageCode, languageOptions, defaultLanguage } from '@/config/language'
 import type { AppSettings } from '@/types'
+import { toCleanedKey } from '@/utils/common'
+
 const currentLanguage = ref<LanguageCode>(defaultLanguage)
 const i18nDict = ref<Record<string, string>>({})
 const categoriesData = ref<CategoryItem[]>([])
@@ -43,7 +45,8 @@ function showToast(message: string, type: AlertType = 'success') {
 
 function t(key: string, langOverride?: LanguageCode): string {
   const lang = langOverride ?? currentLanguage.value
-  if (i18nDict.value[key]) return i18nDict.value[key]
+  const cleanedKey = toCleanedKey(key)
+  if (i18nDict.value[cleanedKey]) return i18nDict.value[cleanedKey]
   return key
 }
 
@@ -54,10 +57,24 @@ async function loadConfig() {
     fetch('/categories.json'),
     fetch('/choices.json'),
   ])
-  i18nDict.value = await i18nRes.json()
-  i18nDict.value = { ...i18nDict.value, ...(await i18nTags.json()) }
+
+  const rawI18n = {
+  ...(await i18nRes.json()),
+  ...(await i18nTags.json()),
+  }
+
+  // 移除 key 中的底線與空格
+  i18nDict.value = Object.entries(rawI18n).reduce((acc, [key, value]) => {
+    const cleanedKey = toCleanedKey(key)
+    acc[cleanedKey] = value
+    return acc
+  }, {} as Record<string, any>)
+
   categoriesData.value = await categoriesRes.json()
   choices.value = await choicesRes.json()
+  // Add a unique key to each choice for easier identification
+  choices.value = choices.value.map((choice) => ({ ...choice, key: toCleanedKey(`${choice.name}`) }))
+
   loadCustomChoices()
 }
 

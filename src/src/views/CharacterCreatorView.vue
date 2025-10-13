@@ -2,6 +2,7 @@
 import { ref, computed, toRefs, type Ref } from 'vue'
 import CharacterForm from '@/components/CharacterForm.vue'
 import PromptDisplay from '@/components/PromptDisplay.vue'
+import PromptParser from '@/components/PromptParser.vue'
 import type { CategoryItem, ChoiceItem, SelectedAttributes } from '@/types'
 import type { LanguageCode } from '@/config/language'
 import type { AppSettings, PreviewSubcategory } from '@/types'
@@ -174,16 +175,39 @@ const jsonData = computed(() => {
 // Final prompt reactive and ordered by category and field order
 const finalPrompt = computed(() => {
   const parts: string[] = []
+
+  // A map for quick lookup: key is 'category_name#choice_name', value is the prompt
+  const promptMap = new Map<string, string>()
+  for (const choice of props.choices) {
+    if (choice.prompt) {
+      promptMap.set(`${choice.category_name}#${choice.name}`, choice.prompt)
+    }
+  }
+
+  const processField = (field: string, selectedValue: string) => {
+    if (selectedValue && selectedValue.trim()) {
+      const mapKey = `${field}#${selectedValue.trim()}`
+      const prompt = promptMap.get(mapKey)
+      parts.push(prompt || selectedValue.trim())
+    }
+  }
+
+  // Process ordered fields
   for (const c of categoryOrder as readonly string[]) {
     const fields = fieldOrderByCategory.value[c] || []
     for (const field of fields) {
       const v = selectedAttributes.value[field]
-      if (v && v.trim()) parts.push(v.trim())
+      if (v) processField(field, v)
     }
   }
+
+  // Process any other fields
   for (const [field, v] of Object.entries(selectedAttributes.value)) {
-    if (!fieldToCategory.value[field] && v && v.trim()) parts.push(v.trim())
+    if (!fieldToCategory.value[field]) {
+      if (v) processField(field, v)
+    }
   }
+
   return parts.length
     ? parts.join(', ')
     : props.t("Click 'Generate Prompt' to see the final output.", 'en')
@@ -263,6 +287,17 @@ loadFavorites()
           Favorites
         </button>
       </li>
+      <li class="nav-item">
+        <button
+          class="nav-link"
+          data-bs-toggle="tab"
+          data-bs-target="#subtab_parser"
+          type="button"
+          role="tab"
+        >
+          {{ t('Prompt Parser') }}
+        </button>
+      </li>
     </ul>
     <div class="d-flex gap-2 mb-3">
       <button class="btn btn-outline-secondary btn-sm" @click="clearAll">
@@ -321,6 +356,14 @@ loadFavorites()
             </div>
           </div>
         </div>
+      </div>
+      <div id="subtab_parser" class="tab-pane fade" role="tabpanel">
+        <PromptParser
+          :choices="choices"
+          :t="t"
+          :show-toast="showToast"
+          :app-settings="appSettings"
+        />
       </div>
     </div>
   </div>

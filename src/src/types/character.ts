@@ -11,6 +11,7 @@ interface ChoiceItem {
   name: string
   prompt: string
   description: string
+  key: string
 }
 
 type SelectedAttributes = Record<string, string>

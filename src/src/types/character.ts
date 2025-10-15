@@ -1,14 +1,14 @@
 interface CategoryItem {
-  name: string
-  category: string
-  sub_category: string
-  optional: number
+  parent_category_id: string // Category id
+  id: string // Sub-category id
   description: string
+  key: string
 }
 
 interface ChoiceItem {
-  category_name: string
-  name: string
+  category_id: string
+  subcategory_id: string
+  id: string
   prompt: string
   description: string
   key: string
@@ -16,10 +16,16 @@ interface ChoiceItem {
 
 type SelectedAttributes = Record<string, string>
 
+interface PreviewLine {
+  label: string
+  value: string
+  [key: string]: any
+}
+
 type PreviewSubcategory = {
   key: string
   label: string
-  lines: { label: string; value: string }[]
+  lines: PreviewLine[]
 }
 
-export type { CategoryItem, ChoiceItem, PreviewSubcategory, SelectedAttributes }
+export type { CategoryItem as CategoryItem, ChoiceItem, PreviewSubcategory, SelectedAttributes, PreviewLine }

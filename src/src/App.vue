@@ -70,11 +70,20 @@ async function loadConfig() {
     return acc
   }, {} as Record<string, any>)
 
-  categoriesData.value = await categoriesRes.json()
+  const rawCategories = await categoriesRes.json()
+  categoriesData.value = rawCategories.flatMap((category: any) => {
+    return category.subcategories.map((subcategory: any) => ({
+      parent_category_id: category.id,
+      id: subcategory.id,
+      description: subcategory.description,
+      key: toCleanedKey(subcategory.id)
+    }));
+  });
+
   choices.value = await choicesRes.json()
   // Add a unique key to each choice for easier identification
-  choices.value = choices.value.map((choice) => ({ ...choice, key: toCleanedKey(`${choice.name}`) }))
-
+  choices.value = choices.value.map((choice) => ({ ...choice, key: toCleanedKey(`${choice.id}`) }))
+  
   loadCustomChoices()
 }
 
@@ -83,10 +92,10 @@ function loadCustomChoices() {
     const raw = localStorage.getItem('customChoices')
     if (raw) {
       const customChoices = JSON.parse(raw) as ChoiceItem[]
-      const customChoiceNames = new Set(customChoices.map((c) => `${c.category_name}#${c.name}`))
+      const customChoiceNames = new Set(customChoices.map((c) => `${c.subcategory_id}#${c.id}`))
       // Filter out default choices that have been customized
       const filteredDefaultChoices = choices.value.filter(
-        (c) => !customChoiceNames.has(`${c.category_name}#${c.name}`),
+        (c) => !customChoiceNames.has(`${c.subcategory_id}#${c.id}`),
       )
       choices.value = [...filteredDefaultChoices, ...customChoices]
     }
@@ -95,7 +104,7 @@ function loadCustomChoices() {
 
 function addChoice(item: ChoiceItem) {
   const existingIndex = choices.value.findIndex(
-    (c) => c.category_name === item.category_name && c.name === item.name,
+    (c) => c.subcategory_id === item.subcategory_id && c.id === item.id,
   )
   if (existingIndex !== -1) {
     choices.value.splice(existingIndex, 1, item)
@@ -107,7 +116,7 @@ function addChoice(item: ChoiceItem) {
 
 function deleteChoice(payload: { category_name: string; name: string }) {
   choices.value = choices.value.filter(
-    (c) => !(c.category_name === payload.category_name && c.name === payload.name),
+    (c) => !(c.subcategory_id === payload.category_name && c.id === payload.name),
   )
   updateCustomChoicesInStorage()
 }

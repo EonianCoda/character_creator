@@ -39,13 +39,11 @@ function getColorForString(str: string): string {
 
 // Group categories -> subcategories -> items
 const grouped = computed(() => {
-  const map: Record<string, Record<string, CategoryItem[]>> = {}
+  const map: Record<string, CategoryItem[]> = {}
   for (const item of props.categories) {
-    const main = item.category
-    const sub = item.sub_category && item.sub_category.length ? item.sub_category : 'general'
-    map[main] ??= {}
-    map[main][sub] ??= []
-    map[main][sub].push(item)
+    const main = item.parent_category_id
+    map[main] ??= []
+    map[main].push(item)
   }
   return map
 })
@@ -57,7 +55,8 @@ function updateField(name: string, value: string) {
     try {
       const raw = localStorage.getItem('customChoices')
       const arr: ChoiceItem[] = raw ? JSON.parse(raw) : []
-      arr.push({ category_name: name, name: value, description: '' })
+      // This is incomplete, but we'll leave it for now
+      arr.push({ category_id: '', subcategory_id: name, id: value, description: '', prompt: value, key: value })
       localStorage.setItem('customChoices', JSON.stringify(arr))
     } catch {}
   }
@@ -65,8 +64,8 @@ function updateField(name: string, value: string) {
 
 // Build choices for a field from props.choices
 function getChoices(name: string): string[] {
-  const arr = props.choices.filter((c) => c.category_name === name).map((c) => c.name)
-  return [''].concat(arr)
+  const arr = props.choices.filter((c) => c.subcategory_id === name).map((c) => c.id)
+  return ['', ...arr]
 }
 
 // Humanize text for display if not localized
@@ -92,7 +91,7 @@ function selectOptionsFor(name: string): { value: string; label: string }[] {
   <div>
     <!-- Tabs for main categories -->
     <ul class="nav nav-tabs nav-fill mb-3" role="tablist">
-      <li class="nav-item" v-for="(subs, main) in grouped" :key="main">
+      <li class="nav-item" v-for="(items, main) in grouped" :key="main">
         <button
           class="nav-link"
           :class="{ active: Object.keys(grouped)[0] === main }"
@@ -114,61 +113,40 @@ function selectOptionsFor(name: string): { value: string; label: string }[] {
           show: Object.keys(grouped)[0] === main,
           active: Object.keys(grouped)[0] === main,
         }"
-        v-for="(subs, main) in grouped"
+        v-for="(items, main) in grouped"
         :key="`pane_${main}`"
         :id="`tab_${main}`"
         role="tabpanel"
       >
-        <div v-for="(items, sub) in subs" :key="`${main}_${sub}`" class="mb-3">
-          <div class="card border">
-            <div
-              class="card-header d-flex justify-content-between align-items-center"
-              :style="{ backgroundColor: getColorForString(sub) }"
-            >
-              <span class="text-uppercase" style="letter-spacing: 0.04em">{{
-                props.t(sub !== 'general' ? sub : main)
-              }}</span>
-              <button
-                class="btn btn-sm btn-outline-secondary"
-                type="button"
-                data-bs-toggle="collapse"
-                :data-bs-target="`#collapse_${main}_${sub}`"
-                aria-label="Toggle"
-              >
-                <i class="bi bi-caret-down-fill"></i>
-              </button>
-            </div>
-            <div class="collapse show" :id="`collapse_${main}_${sub}`">
-              <div class="card-body">
-                <div class="row g-3">
-                  <div v-for="item in items" :key="item.name" class="col-12 col-md-6">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <label class="form-label fw-semibold mb-1">{{ props.t(item.name) }}</label>
-                      <button
-                        class="btn btn-sm btn-outline-secondary"
-                        type="button"
-                        @click="emit('randomize', item.name)"
-                        aria-label="Randomize"
-                      >
-                        <i class="bi bi-shuffle"></i>
-                      </button>
-                    </div>
-                    <div class="description-wrapper mb-1">
-                      <small
-                        v-if="item.description && !hideCategoryDescriptions"
-                        class="text-muted d-block description-truncate"
-                        >{{ item.description }}</small
-                      >
-                    </div>
-                    <SelectInput
-                      :model-value="modelValue[item.name] || ''"
-                      :options="selectOptionsFor(item.name)"
-                      :placeholder="props.t(item.name)"
-                      @update:modelValue="(v: string) => updateField(item.name, v)"
-                      :is-filled="!!modelValue[item.name]"
-                    />
-                  </div>
+        <div class="card border">
+          <div class="card-body">
+            <div class="row g-3">
+              <div v-for="item in items" :key="item.id" class="col-12 col-md-6">
+                <div class="d-flex justify-content-between align-items-center">
+                  <label class="form-label fw-semibold mb-1">{{ props.t(item.id) }}</label>
+                  <button
+                    class="btn btn-sm btn-outline-secondary"
+                    type="button"
+                    @click="emit('randomize', item.id)"
+                    aria-label="Randomize"
+                  >
+                    <i class="bi bi-shuffle"></i>
+                  </button>
                 </div>
+                <div class="description-wrapper mb-1">
+                  <small
+                    v-if="item.description && !hideCategoryDescriptions"
+                    class="text-muted d-block description-truncate"
+                    >{{ item.description }}</small
+                  >
+                </div>
+                <SelectInput
+                  :model-value="modelValue[item.id] || ''"
+                  :options="selectOptionsFor(item.id)"
+                  :placeholder="props.t(item.id)"
+                  @update:modelValue="(v: string) => updateField(item.id, v)"
+                  :is-filled="!!modelValue[item.id]"
+                />
               </div>
             </div>
           </div>

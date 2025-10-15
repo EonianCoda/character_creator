@@ -1,37 +1,196 @@
 [
-  { "name": "gender", "category": "character_traits", "sub_category": "", "optional": 0, "description": "Options: male, female." },
-  { "name": "age", "category": "character_traits", "sub_category": "", "optional": 1, "description": "Fill in existing age prompt words." },
-  { "name": "character", "category": "character_traits", "sub_category": "", "optional": 2, "description": "" },
-  { "name": "fantasy_races", "category": "character_traits", "sub_category": "", "optional": 2, "description": "" },
-  { "name": "other_character", "category": "character_traits", "sub_category": "", "optional": 2, "description": "" },
-  { "name": "hair_color", "category": "appearance", "sub_category": "hair", "optional": 0, "description": "Common colors." },
-  { "name": "hair_style", "category": "appearance", "sub_category": "hair", "optional": 0, "description": "Fill in existing hair style prompt words." },
-  { "name": "hair_texture", "category": "appearance", "sub_category": "hair", "optional": 3, "description": "e.g., Smooth." },
-  { "name": "bangs", "category": "appearance", "sub_category": "hair", "optional": 3, "description": "e.g., Covering forehead, Covering eyes." },
-  { "name": "hair_details", "category": "appearance", "sub_category": "hair", "optional": 3, "description": "e.g., Highlights, Hair end color." },
-  { "name": "eye_color", "category": "appearance", "sub_category": "eye", "optional": 1, "description": "Common colors." },
-  { "name": "pupil_shape", "category": "appearance", "sub_category": "eye", "optional": 3, "description": "" },
-  { "name": "eye_shade", "category": "appearance", "sub_category": "eye", "optional": 3, "description": "" },
-  { "name": "eye_state", "category": "appearance", "sub_category": "eye", "optional": 3, "description": "e.g., Blinking, Closed, Gaze." },
-  { "name": "face_shape", "category": "appearance", "sub_category": "face", "optional": 3, "description": "Fill in existing face shape prompt words." },
-  { "name": "lip_gloss", "category": "appearance", "sub_category": "face", "optional": 2, "description": "" },
-  { "name": "ears", "category": "appearance", "sub_category": "face", "optional": 2, "description": "Fill in existing ear prompt words. Comment: Should it match the race?" },
-  { "name": "expression", "category": "appearance", "sub_category": "face", "optional": 1, "description": "Fill in existing prompt words." },
-  { "name": "skin_color", "category": "appearance", "sub_category": "body", "optional": 2, "description": "e.g., pale, dark, white." },
-  { "name": "chest_size", "category": "appearance", "sub_category": "body", "optional": 1, "description": "e.g., extreme large, large, big, medium, small, flat." },
-  { "name": "nail_color", "category": "appearance", "sub_category": "body", "optional": 3, "description": "Comment: Conflicts with gloves." },
-  { "name": "body_type", "category": "appearance", "sub_category": "body", "optional": 2, "description": "e.g., Tall, short, fat, thin." },
-  { "name": "leg_type", "category": "appearance", "sub_category": "body", "optional": 2, "description": "e.g., Normal, thick, thin." },
-  { "name": "clothing", "category": "attire", "sub_category": "clothing", "optional": 0, "description": "" },
-  { "name": "clothing_style", "category": "attire", "sub_category": "clothing", "optional": 1, "description": "" },
-  { "name": "clothing_material", "category": "attire", "sub_category": "clothing", "optional": 2, "description": "" },
-  { "name": "clothing_color_pattern", "category": "attire", "sub_category": "clothing", "optional": 2, "description": "" },
-  { "name": "accessories", "category": "attire", "sub_category": "", "optional": 1, "description": "e.g., Jewelry, rings, veil, headpiece, armlet, bracelet, anklet, earrings, belt, glasses/eyepatch, hair ornament, mask, necklace/collar/neckpiece, crown, shawl/cloak, brooch/badge, epaulet." },
-  { "name": "glove", "category": "attire", "sub_category": "", "optional": 1, "description": "" },
-  { "name": "footwear", "category": "attire", "sub_category": "", "optional": 2, "description": "" },
-  { "name": "sock", "category": "attire", "sub_category": "", "optional": 1, "description": "" },
-  { "name": "pose", "category": "action_viewpoint", "sub_category": "", "optional": 0, "description": "e.g., Standing, Sitting." },
-  { "name": "hand_action", "category": "action_viewpoint", "sub_category": "", "optional": 2, "description": "" },
-  { "name": "viewpoint", "category": "action_viewpoint", "sub_category": "", "optional": 1, "description": "" }
+  {
+    "id": "character_traits",
+    "description": "Attributes that define the identity, role, and nature of the character.",
+    "subcategories": [
+      {
+        "id": "gender",
+        "description": "Defines the gender identity of the character.",
+        "tags": []
+      },
+      {
+        "id": "age",
+        "description": "Describes the age group or stage of the character.",
+        "tags": []
+      },
+      {
+        "id": "character",
+        "description": "General identity or role of the character, such as hero, villain, or background figure.",
+        "tags": []
+      },
+      {
+        "id": "fantasy_race",
+        "description": "Specifies non-human or mythical races, such as elf, orc, dragonkin, or demon.",
+        "tags": []
+      },
+      {
+        "id": "other_character",
+        "description": "Additional character-related traits not covered by other categories.",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "id": "appearance",
+    "description": "Details about the physical appearance of characters or objects.",
+    "subcategories": [
+      {
+        "id": "hair_color",
+        "description": "Defines the color of the character's hair.",
+        "tags": []
+      },
+      {
+        "id": "hair_style",
+        "description": "Describes the hairstyle.",
+        "tags": []
+      },
+      {
+        "id": "hair_texture",
+        "description": "Describes the texture of the hair.",
+        "tags": []
+      },
+      {
+        "id": "bangs",
+        "description": "Describes the presence and style of bangs.",
+        "tags": []
+      },
+      {
+        "id": "hair_details",
+        "description": "Additional hair features such as highlights or colored tips.",
+        "tags": []
+      },
+      {
+        "id": "eye_color",
+        "description": "Defines the iris color.",
+        "tags": []
+      },
+      {
+        "id": "pupil_shape",
+        "description": "Describes the shape of the pupil.",
+        "tags": []
+      },
+      {
+        "id": "eye_shade",
+        "description": "Defines the shading or gradient of the eyes.",
+        "tags": []
+      },
+      {
+        "id": "eye_state",
+        "description": "Describes the state or action of the eyes.",
+        "tags": []
+      },
+      {
+        "id": "face_shape",
+        "description": "Defines the overall shape of the face.",
+        "tags": []
+      },
+      {
+        "id": "lip_gloss",
+        "description": "Indicates the presence and style of lip gloss or shine.",
+        "tags": []
+      },
+      {
+        "id": "ears",
+        "description": "Describes the shape or type of ears.",
+        "tags": []
+      },
+      {
+        "id": "expression",
+        "description": "Defines the facial expression.",
+        "tags": []
+      },
+      {
+        "id": "skin_color",
+        "description": "Defines the skin tone or color.",
+        "tags": []
+      },
+      {
+        "id": "chest_size",
+        "description": "Describes the size of the chest area.",
+        "tags": []
+      },
+      {
+        "id": "nail_color",
+        "description": "Specifies the color of fingernails.",
+        "tags": []
+      },
+      {
+        "id": "body_type",
+        "description": "Describes the overall physique.",
+        "tags": []
+      },
+      {
+        "id": "leg_type",
+        "description": "Defines the shape or proportion of legs.",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "id": "attire",
+    "description": "Clothing and accessories worn by the character.",
+    "subcategories": [
+      {
+        "id": "clothing",
+        "description": "General description of clothing worn by the character.",
+        "tags": []
+      },
+      {
+        "id": "clothing_style",
+        "description": "Specifies the fashion or theme of the clothing.",
+        "tags": []
+      },
+      {
+        "id": "clothing_material",
+        "description": "Describes the fabric or texture of the clothing.",
+        "tags": []
+      },
+      {
+        "id": "clothing_color_pattern",
+        "description": "Defines the color scheme or pattern of the clothing.",
+        "tags": []
+      },
+      {
+        "id": "accessories",
+        "description": "Additional wearable items such as jewelry, glasses, or crown.",
+        "tags": []
+      },
+      {
+        "id": "glove",
+        "description": "Describes the presence and type of gloves.",
+        "tags": []
+      },
+      {
+        "id": "footwear",
+        "description": "Defines the type of shoes or boots worn.",
+        "tags": []
+      },
+      {
+        "id": "sock",
+        "description": "Describes the type or style of socks.",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "id": "action_viewpoint",
+    "description": "Describes the character's pose, gestures, and camera perspective.",
+    "subcategories": [
+      {
+        "id": "pose",
+        "description": "Describes the character's posture or stance.",
+        "tags": []
+      },
+      {
+        "id": "hand_action",
+        "description": "Defines the gesture or activity of the hands.",
+        "tags": []
+      },
+      {
+        "id": "viewpoint",
+        "description": "Specifies the camera angle or perspective.",
+        "tags": []
+      }
+    ]
+  }
 ]
-

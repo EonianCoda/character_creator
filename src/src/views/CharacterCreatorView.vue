@@ -49,9 +49,9 @@ const fieldOrderByCategory = computed<Record<string, string[]>>(() => {
   const map: Record<string, string[]> = {}
   for (const c of categoryOrder) map[c] = []
   for (const item of props.categories) {
-    const c = item.category
+    const c = item.parent_category_id
     map[c] ??= []
-    map[c].push(item.name)
+    map[c].push(item.id)
   }
   return map
 })
@@ -60,7 +60,7 @@ const fieldOrderByCategory = computed<Record<string, string[]>>(() => {
 const fieldToCategory = computed<Record<string, string>>(() => {
   const map: Record<string, string> = {}
   for (const item of props.categories) {
-    map[item.name] = item.category
+    map[item.id] = item.parent_category_id
   }
   return map
 })
@@ -80,8 +80,7 @@ const groupedPreview = computed(() => {
   for (const [field, value] of Object.entries(selectedAttributes.value)) {
     if (!value || !value.trim()) continue
     const c = fieldToCategory.value[field] || 'other'
-    const categoryItem = props.categories.find((item) => item.name === field)
-    const subcategory = categoryItem?.sub_category || 'general'
+    const subcategory = field
     grouped[c] ??= {}
     grouped[c][subcategory] ??= []
 
@@ -180,7 +179,7 @@ const finalPrompt = computed(() => {
   const promptMap = new Map<string, string>()
   for (const choice of props.choices) {
     if (choice.prompt) {
-      promptMap.set(`${choice.category_name}#${choice.name}`, choice.prompt)
+      promptMap.set(`${choice.subcategory_id}#${choice.id}`, choice.prompt)
     }
   }
 
@@ -239,16 +238,16 @@ function clearAll() {
 function randomAll() {
   const next: SelectedAttributes = {}
   for (const item of props.categories) {
-    const opts = props.choices.filter((c) => c.category_name === item.name).map((c) => c.name)
+    const opts = props.choices.filter((c) => c.subcategory_id === item.id).map((c) => c.id)
     if (opts.length > 0) {
-      next[item.name] = opts[Math.floor(Math.random() * opts.length)] ?? ''
+      next[item.id] = opts[Math.floor(Math.random() * opts.length)] ?? ''
     }
   }
   selectedAttributes.value = next
 }
 
 function onRandomize(fieldName: string) {
-  const opts = props.choices.filter((c) => c.category_name === fieldName).map((c) => c.name)
+  const opts = props.choices.filter((c) => c.subcategory_id === fieldName).map((c) => c.id)
   if (opts.length > 0) {
     const val = opts[Math.floor(Math.random() * opts.length)] ?? ''
     selectedAttributes.value = { ...selectedAttributes.value, [fieldName]: val }

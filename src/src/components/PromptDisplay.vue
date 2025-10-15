@@ -74,18 +74,33 @@ async function handleGenerate() {
         <div class="card-body">
           <div v-for="subcategory in group.subcategories" :key="subcategory.key" class="mb-3">
             <h6 v-if="subcategory.label" class="text-muted small mb-2">{{ subcategory.label }}</h6>
-            <table
-              class="table table-sm table-borderless mb-0"
-              v-if="subcategory.lines.length > 0 && subcategory.lines[0].value"
-            >
-              <tbody>
-                <tr v-for="line in subcategory.lines" :key="line.label">
-                  <td class="w-50">{{ line.label }}</td>
-                  <td>{{ line.value }}</td>
-                </tr>
-              </tbody>
-            </table>
-            <p v-else class="mb-0">{{ subcategory.lines[0]?.label || '' }}</p>
+            <div v-if="isParserView">
+              <div v-for="line in subcategory.lines" :key="line.raw" class="d-flex align-items-center mb-1">
+                <i v-if="line.isLora" class="bi bi-memory me-2" title="Lora Tag"></i>
+                <span
+                  :class="{
+                    'fw-bold': line.bracketType === '(',
+                    'fst-italic': line.bracketType === '['
+                  }"
+                  >{{ line.text }}</span
+                >
+                <span v-if="line.weight" class="badge bg-secondary ms-2">{{ line.weight }}</span>
+              </div>
+            </div>
+            <div v-else>
+              <table
+                class="table table-sm table-borderless mb-0"
+                v-if="subcategory.lines.length > 0 && subcategory.lines[0].value"
+              >
+                <tbody>
+                  <tr v-for="line in subcategory.lines" :key="line.label">
+                    <td class="w-50">{{ line.label }}</td>
+                    <td>{{ line.value }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p v-else class="mb-0">{{ subcategory.lines[0]?.label || '' }}</p>
+            </div>
           </div>
         </div>
       </div>
